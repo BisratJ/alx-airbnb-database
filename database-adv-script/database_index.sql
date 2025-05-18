@@ -1,0 +1,1 @@
+-- Task 3: Index Creation SQL Commands
