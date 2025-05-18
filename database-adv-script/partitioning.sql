@@ -1,1 +1,8 @@
--- Task 5: Partitioning SQL
+-- Partition Booking table by start_date (yearly partitions)
+ALTER TABLE bookings
+PARTITION BY RANGE (YEAR(start_date)) (
+    PARTITION p2023 VALUES LESS THAN (2024),
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION pmax VALUES LESS THAN MAXVALUE
+);
