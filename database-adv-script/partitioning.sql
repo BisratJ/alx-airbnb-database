@@ -1,8 +1,37 @@
--- Partition Booking table by start_date (yearly partitions)
-ALTER TABLE bookings
-PARTITION BY RANGE (YEAR(start_date)) (
+-- Create partitioned bookings table (if creating new table)
+CREATE TABLE bookings_partitioned (
+    id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    property_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id, start_date)
+) PARTITION BY RANGE (YEAR(start_date)) (
+    PARTITION p2020 VALUES LESS THAN (2021),
+    PARTITION p2021 VALUES LESS THAN (2022),
+    PARTITION p2022 VALUES LESS THAN (2023),
     PARTITION p2023 VALUES LESS THAN (2024),
     PARTITION p2024 VALUES LESS THAN (2025),
     PARTITION p2025 VALUES LESS THAN (2026),
     PARTITION pmax VALUES LESS THAN MAXVALUE
 );
+
+-- OR alter existing table (if migrating)
+ALTER TABLE bookings
+PARTITION BY RANGE (YEAR(start_date)) (
+    PARTITION p2020 VALUES LESS THAN (2021),
+    PARTITION p2021 VALUES LESS THAN (2022),
+    PARTITION p2022 VALUES LESS THAN (2023),
+    PARTITION p2023 VALUES LESS THAN (2024),
+    PARTITION p2024 VALUES LESS THAN (2025),
+    PARTITION p2025 VALUES LESS THAN (2026),
+    PARTITION pmax VALUES LESS THAN MAXVALUE
+);
+
+-- Verify partition structure
+SELECT 
+    PARTITION_NAME, 
+    TABLE_ROWS 
+FROM INFORMATION_SCHEMA.PARTITIONS 
+WHERE TABLE_NAME = 'bookings_partitioned';
